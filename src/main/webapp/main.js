@@ -29,6 +29,7 @@ class Grid {
             this.drawCross();
         }
         this.drawPoint()
+        this.draw_all_points_from_cache()
     }
 
     drawPoint() {
@@ -156,6 +157,31 @@ class Grid {
             ctx.lineTo(x + this.raz, y);
         }
         ctx.stroke();
+    }
+
+    draw_all_points_from_cache() {
+        localStorage.getItem("data").split("<tr>").forEach(val => {
+            let res = val.replaceAll("</p></td>", "").split("<td><p class='crop'>")
+            if (res.length > 1 && res[3] == this.r) {
+                this.draw_point(res[1], res[2], res[4] === "Hit" ? 1 : 0)
+            }
+        })
+    }
+
+    draw_point(x, y, s) {
+        ctx.beginPath()
+        ctx.fillStyle = "#ffe300";
+        if (s === 0) {
+            ctx.fillStyle = "#f00";
+        } else if (s === 1) {
+            ctx.fillStyle = "#0f0";
+        }
+
+        let r = this.trans_coords_to_canvas(x, y)
+        ctx.arc(r[0], r[1], this.raz / 1.5, 0, Math.PI * 2, true);
+        ctx.fill();
+        ctx.stroke();
+        ctx.fillStyle = "#000";
     }
 
     trans_coords(x, y) {

@@ -20,7 +20,7 @@ public class AreaCheckServlet extends HttpServlet {
         try {
             x = Float.parseFloat(x_coords.replace(",", "."));
             y = Float.parseFloat(y_coords.replace(",", "."));
-            r = Integer.parseInt(size_r.replace(",", "."));
+            r = Float.parseFloat(size_r.replace(",", "."));
         } catch (Exception e) {
             response.setStatus(400);
             response.getWriter().print("x, y, r - must be float float ");
@@ -44,10 +44,10 @@ public class AreaCheckServlet extends HttpServlet {
 
         if (response.getStatus() != 400) {
             LocalDateTime attemptTime = LocalDateTime.now();
-            Instant scriptStartTime = Instant.now();
+            long scriptStartTime = System.nanoTime();
             String isHit = this.checkHit(x, y, r) ? "Hit" : "Miss";
-            Instant scriptEndTime = Instant.now();
-            Duration scriptDuration = Duration.between(scriptStartTime, scriptEndTime);
+            long scriptEndTime = System.nanoTime();
+            long scriptDuration = (scriptEndTime - scriptStartTime);
             response.getWriter().print(
                     "<tr>" +
                             "<td><p class='crop'>" + x + "</p></td>" +
@@ -55,7 +55,7 @@ public class AreaCheckServlet extends HttpServlet {
                             "<td><p class='crop'>" + r + "</p></td>" +
                             "<td><p class='crop'>" + isHit + "</p></td>" +
                             "<td><p class='crop'>" + attemptTime + "</p></td>" +
-                            "<td><p class='crop'>" + scriptDuration + "</p></td>" +
+                            "<td><p class='crop'>" + scriptDuration + "ms </p></td>" +
                     "</tr>"
             );
         }
