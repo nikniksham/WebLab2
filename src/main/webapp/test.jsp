@@ -1,9 +1,1 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<html>
-<head>
-    <title>Title</title>
-</head>
-<body>
-    <h2>Prosto proverka</h2>
-</body>
-</html>
+<%=request.getSession(true).getAttribute("tableData")%>

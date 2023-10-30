@@ -3,11 +3,13 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @WebServlet("/AreaCheckServlet")
@@ -48,6 +50,7 @@ public class AreaCheckServlet extends HttpServlet {
             String isHit = this.checkHit(x, y, r) ? "Hit" : "Miss";
             long scriptEndTime = System.nanoTime();
             long scriptDuration = (scriptEndTime - scriptStartTime);
+
             response.getWriter().print(
                     "<tr>" +
                             "<td><p class='crop'>" + x + "</p></td>" +
@@ -58,6 +61,30 @@ public class AreaCheckServlet extends HttpServlet {
                             "<td><p class='crop'>" + scriptDuration + "ms </p></td>" +
                     "</tr>"
             );
+
+            HttpSession session = request.getSession(true);
+            if (session.getAttribute("tableData") == null) {
+                session.setAttribute("tableData", "");
+            }
+
+            session.setAttribute("tableData", session.getAttribute("tableData") +
+                    "<tr>" +
+                        "<td><p class='crop'>" + x + "</p></td>" +
+                        "<td><p class='crop'>" + y + "</p></td>" +
+                        "<td><p class='crop'>" + r + "</p></td>" +
+                        "<td><p class='crop'>" + isHit + "</p></td>" +
+                        "<td><p class='crop'>" + attemptTime + "</p></td>" +
+                        "<td><p class='crop'>" + scriptDuration + "ms </p></td>" +
+                    "</tr>");
+            /*
+            if (getServletContext().getAttribute("tableData") == null) {
+                ArrayList<Result> res = new ArrayList<>();
+                getServletContext().setAttribute("tableData", res);
+            }
+            ArrayList<Result> tab = (ArrayList<Result>) getServletContext().getAttribute("tableData");
+            tab.add(new Result(x, y, r, isHit, attemptTime, scriptDuration));
+            getServletContext().setAttribute("tableData", tab);
+             */
         }
     }
 

@@ -1,3 +1,4 @@
+<%@ page import="java.util.ArrayList" %>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <html lang="ru">
 <head>
@@ -73,14 +74,16 @@
                     </tr>
                     </thead>
                     <tbody id="suda">
-
+                    <% if (request.getSession(true).getAttribute("tableData") != null) {%>
+                    <%=request.getSession(true).getAttribute("tableData")%>
+                    <% } %>
                     </tbody>
                 </table>
             </div>
         </div>
     </div>
 </div>
+<script src="js/jquery-3.6.3.js" ></script>
 <script src="main.js"></script>
 </body>
 </html>
-

@@ -160,8 +160,9 @@ class Grid {
     }
 
     draw_all_points_from_cache() {
-        localStorage.getItem("data").split("<tr>").forEach(val => {
-            let res = val.replaceAll("</p></td>", "").split("<td><p class='crop'>")
+        document.getElementById("suda").innerHTML.split("<tr>").forEach(val => {
+            let res = val.replaceAll("</p></td>", "").split('<td><p class="crop">')
+            // console.log(res)
             if (res.length > 1 && res[3] == this.r) {
                 this.draw_point(res[1], res[2], res[4] === "Hit" ? 1 : 0)
             }
@@ -314,9 +315,10 @@ function request_to_servlet() {
         if (xhr.readyState == 4) {
             if (xhr.status == 200) {
                 localStorage.setItem("data", xhr.responseText + localStorage.getItem("data"));
-                document.getElementById("suda").innerHTML = localStorage.getItem("data");
+                // document.getElementById("suda").innerHTML = localStorage.getItem("data");
                 grid.point_coords[2] = (xhr.responseText.indexOf("Hit") === -1) ? 0 : 1;
                 grid.draw();
+                refreshFunction();
             }
         }
     }
@@ -350,7 +352,7 @@ function request_to_php() {
             body: formData
         }).then(response => response.text()).then(function (serverAnswer) {
             localStorage.setItem("data", serverAnswer + localStorage.getItem("data"));
-            document.getElementById("suda").innerHTML = localStorage.getItem("data");
+            // document.getElementById("suda").innerHTML = localStorage.getItem("data");
             grid.point_coords[2] = (serverAnswer.indexOf("Попал") === -1) ? 0 : 1;
             grid.draw();
             // console.log(serverAnswer.indexOf("Попал"));
@@ -361,8 +363,17 @@ function request_to_php() {
 function clear_table() {
     localStorage.setItem("data", "");
     document.getElementById("suda").innerHTML = "";
-    // grid.point_coords[2] = 2;
-    // grid.draw();
+
+    let xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState == 4) {
+            if (xhr.status == 200) {
+                window.location.reload();
+            }
+        }
+    }
+    xhr.open('POST', '/WebLab2/test', true);
+    xhr.send(null);
 }
 
 canvas.onmouseleave = function (evt) {
@@ -378,10 +389,20 @@ document.querySelector("select").addEventListener('change', function (e) {
     grid.draw();
 })
 
+function refreshFunction(){
+    $.ajax({
+        url: '/WebLab2/test',  //page or method that will return html
+        success: function (data) {
+            $('tbody#suda').html(data);
+        }
+    });
+}
+
 if (localStorage.getItem("data") == null) {
     localStorage.setItem("data", "");
 }
 
-document.getElementById("suda").innerHTML = localStorage.getItem("data");
+
+// document.getElementById("suda").innerHTML = localStorage.getItem("data");
 let grid = new Grid(canvas.width, canvas.height, 3); // r - размер фигурки
 grid.draw();
